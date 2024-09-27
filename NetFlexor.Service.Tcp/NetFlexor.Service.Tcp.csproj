@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetFlexor.Interfaces\NetFlexor.Interfaces.csproj" />
+    <ProjectReference Include="..\NetFlexor.ServiceHelpers\NetFlexor.ServiceHelpers.csproj" />
+  </ItemGroup>
+
+</Project>

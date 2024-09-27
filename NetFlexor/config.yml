@@ -1,0 +1,101 @@
+# Common settings shared between all services
+# Note:
+#  - The buffer settings are shared between all services.
+#    - For example, if you set the buffer size to 10MB, then all services will have a 10MB buffer.
+#      And if you have 5 services, then the total buffer size will be 50MB.
+# Individual services can override these settings and have their own buffer size or locations.
+Common:
+  ExecutionInterval: 1s # Execution interval for the services
+  ExecutionFormat: parallel # Execute the service actions in parallel or in sequence
+                   # parallel: all actions are executed at the same time
+                   # sequence: all actions are executed one after another
+                   # NOTE: this also affects the buffer service
+  
+  Buffer:
+    MemoryBufferSize: 500MB # Buffer size
+    #MemoryBufferSize: 10KB # Buffer size
+    #DiskBufferSize: 500MB # Buffer size
+    DiskBufferSize: 1MB # Buffer size
+    BufferToDisk: true # Buffer to disk
+    BufferPath: netBuffer # Buffer path
+    BufferFile: buffer # Buffer file
+    BufferEnqueuePatchSize: 5 # How many containers are enqueued to the memory buffer at once from the disk buffer
+
+# Used services:
+Services:
+
+# Not yet implented!
+  - Type: Interface.Service
+    Name: ConfigurationInterface_1
+
+  # Data output with http:
+  - Type: Http.Service
+    Name: httpService_1
+    # One url for all linked service or use individual urls for each linked service
+    # Url: http://192.168.56.10:1880/api/v2/write?
+    Method: POST
+    Accept: application/json
+    ContentType: application/json
+    ContainerCount: 5 
+    Buffer:
+      MemoryBufferSize: 10MB
+      DiskBufferSize: 10MB
+      BufferToDisk: true
+      BufferPath: /tmp/netFlexor/httpService
+      BufferFile: httpBuffer
+    Linked:
+    - Name: httpListener_1
+      Url: http://192.168.56.10:1880/api/v2/write?
+      DataFormat: |
+        jsonata:
+        $.DataContainer.Data
+
+  - Type: Http.Proxy.Service
+    Name: httpProxy_1
+    ListeningUrl: http://127.0.0.1:8080/
+    OutputUrl: http://192.168.56.10:1880/api/v2/write?
+    ExecutionInterval: 1s
+    AllowedSources: ["*.*.*.*/0"] # "*.*.*.*/0" means that all ip addresses are allowed
+    AllowedHttpMethods: [POST,GET]
+
+  - Type: Http.Listener.Service
+    Name: httpListener_1
+    ListeningUrl: http://127.0.0.1:3030/
+    ExecutionInterval: 1s
+    AllowedSources: ["*.*.*.*/0"] # "*.*.*.*/0" means that all ip addresses are allowed
+    AllowedHttpMethods: [POST,GET]
+    TimeFormat: unix-s
+    ContentType: application/json
+
+  - Type: Tcp.Proxy.Service
+    Name: tcpProxy_1
+    Listening: 127.0.0.1:3020
+    Forward: 192.168.56.10:1880
+    AllowedSources: ["*.*.*.*/0"]
+    ExecutionInterval: 1s # Interval is only used when the TCP service would crash and needs to be restarted
+    KeepAlive: 5s
+
+  - Type: Random.Service
+    Name: randomNumber_1
+    ExecutionInterval: 1s
+    Min: 0
+    Max: 15000
+    Count: 100
+
+  - Type: File.Serializer.Service
+    Name: file_2
+    Folder: files/netFlexorFileSerializer # Folder path
+    FilePrefix: test # File prefix name
+    FileSuffix: .csv # File suffix name. If DataFormat is empty, then the file suffix will be used as file format source
+    ExecutionInterval: 5s # Empty the buffer to file every 5 seconds
+
+    #Buffer: # Optional buffer settings. Can be used in other services as well.
+    # MemoryBufferSize: 10MB # Buffer size
+    # DiskBufferSize: 10MB # Buffer size
+    # BufferToDisk: true # Buffer to disk
+    # BufferPath: netFlexor/httpApi # Buffer path
+    # BufferFile: apibuffer # Buffer file
+
+    Linked:
+    - Name: randomNumber_1
+      DataFormat: "$for($(tag),$(value)),$(timestamp)"
