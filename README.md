@@ -57,10 +57,10 @@ Configuration is done through the config.yml file and it is imported to the appl
 
 # Services
 
-There three types of action a service can support: Forwad, Data input and Data output.
+There three types of action a service can support: Forward, Data input and Data output.
 The following table will show the features and the supported actions.
 
-**Forwad** action will not store the data, but will forward it to a new destination.
+**Forward** action will not store the data, but will forward it to a new destination.
 There is no data buffering or data storage, so that the client/sender should be aware of the data loss or buffer the data by itself.
 
 **Input** action will store the data in the internal memory.
