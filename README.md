@@ -2,7 +2,7 @@
 
 Hello, amateur coder here.
 
-This project is purely created to learn and understand coding in C# and .NET with the help of a AI.
+This project is purely created to learn and understand coding in C# and .NET with the help of an AI.
 I already have some experience with C# and .NET from school and work, but I wanted to learn more so I decided to create this project on my free time.
 
 NetFlexor is a hobby based project to forward trafic to known http or tcp ports/endpoints.
@@ -172,13 +172,13 @@ Services:
       DataFormat: |
         jsonata:
         $.DataContainer.Data
-        # DataFormat defines how the data will be written to the file
-        path: /tmp/netFlexor
-        AllowedFolderSize: 500MB
-        AllowedFileCount: 10
-        # With the above configuration, the File.Serializer.Service will use the linked service as a data source
-        # and will write the data to the file with the defined format.
-        # The data will be written to the /tmp/netFlexor folder and the folder size will be limited to 500MB or to 10 files.
+      # DataFormat defines how the data will be written to the file
+      path: /tmp/netFlexor
+      AllowedFolderSize: 500MB
+      AllowedFileCount: 10
+      # With the above configuration, the File.Serializer.Service will use the linked service as a data source
+      # and will write the data to the file with the defined format.
+      # The data will be written to the /tmp/netFlexor folder and the folder size will be limited to 500MB or to 10 files.
 ```
 
 Linked service can have individual configuration or it can use the service configuration.
@@ -255,7 +255,7 @@ In that sense it also can be used to forward http trafic, but it is not recomend
 | Listening | String | Url where the service will listen to the incoming http trafic |
 | Forward | String | Url where the service will forward the http trafic |
 | AllowedSources | String array | List of allowed ip addresses |
-| KeepAlive | String | List of allowed http methods |
+| KeepAlive | String | Forward tcp connection keepalive time from the last connection in the input |
 ##### Example
 ```yaml
 Services:
